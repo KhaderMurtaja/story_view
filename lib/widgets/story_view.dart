@@ -1,13 +1,14 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'story_video.dart';
-import 'story_image.dart';
 
 import '../controller/story_controller.dart';
 import '../utils.dart';
+import 'story_image.dart';
+import 'story_video.dart';
 
 /// Indicates where the progress indicators should be placed.
 enum ProgressPosition { top, bottom }
@@ -211,7 +212,7 @@ class StoryItem {
 
   /// Shorthand for creating page video. [controller] should be same instance as
   /// one passed to the `StoryView`
-  factory StoryItem.pageVideo(
+  factory StoryItem.pageVideoUrl(
     String url, {
     @required StoryController controller,
     Duration duration,
@@ -229,6 +230,49 @@ class StoryItem {
                 url,
                 controller: controller,
                 requestHeaders: requestHeaders,
+              ),
+              SafeArea(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(bottom: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    color:
+                        caption != null ? Colors.black54 : Colors.transparent,
+                    child: caption != null
+                        ? Text(
+                            caption,
+                            style: TextStyle(fontSize: 15, color: Colors.white),
+                            textAlign: TextAlign.center,
+                          )
+                        : SizedBox(),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        shown: shown,
+        duration: duration ?? Duration(seconds: 10));
+  }
+
+  factory StoryItem.pageVideoFile(
+    File file, {
+    @required StoryController controller,
+    Duration duration,
+    BoxFit imageFit = BoxFit.fitWidth,
+    String caption,
+    bool shown = false,
+  }) {
+    return StoryItem(
+        Container(
+          color: Colors.black,
+          child: Stack(
+            children: <Widget>[
+              StoryVideo.file(
+                file,
+                controller: controller,
               ),
               SafeArea(
                 child: Align(
@@ -746,7 +790,11 @@ class PageBarState extends State<PageBar> {
     super.initState();
 
     int count = widget.pages.length;
-    spacing = count > 15 ? 1 : count > 10 ? 2 : 4;
+    spacing = count > 15
+        ? 1
+        : count > 10
+            ? 2
+            : 4;
 
     widget.animation.addListener(() {
       setState(() {});
@@ -774,7 +822,11 @@ class PageBarState extends State<PageBar> {
             padding: EdgeInsets.only(
                 right: widget.pages.last == it ? 0 : this.spacing),
             child: StoryProgressIndicator(
-              isPlaying(it) ? widget.animation.value : it.shown ? 1 : 0,
+              isPlaying(it)
+                  ? widget.animation.value
+                  : it.shown
+                      ? 1
+                      : 0,
               indicatorHeight:
                   widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
             ),

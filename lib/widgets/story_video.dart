@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:video_player/video_player.dart';
 
-import '../utils.dart';
 import '../controller/story_controller.dart';
+import '../utils.dart';
 
 class VideoLoader {
   String url;
-
+  File file;
   File videoFile;
 
   Map<String, dynamic> requestHeaders;
 
   LoadState state = LoadState.loading;
 
-  VideoLoader(this.url, {this.requestHeaders});
+  VideoLoader(this.url, {this.requestHeaders, this.file});
 
   void loadVideo(VoidCallback onComplete) {
     if (this.videoFile != null) {
@@ -25,18 +25,28 @@ class VideoLoader {
       onComplete();
     }
 
-    final fileStream = DefaultCacheManager()
-        .getFileStream(this.url, headers: this.requestHeaders);
-
-    fileStream.listen((fileResponse) {
-      if (fileResponse is FileInfo) {
-        if (this.videoFile == null) {
-          this.state = LoadState.success;
-          this.videoFile = fileResponse.file;
-          onComplete();
-        }
+    if (this.file != null) {
+      if (this.videoFile == null) {
+        this.videoFile = File(this.file.path);
+        this.state = LoadState.success;
+        onComplete();
+        return;
       }
-    });
+    }
+    if (this.url.isNotEmpty) {
+      final fileStream = DefaultCacheManager()
+          .getFileStream(this.url, headers: this.requestHeaders);
+
+      fileStream.listen((fileResponse) {
+        if (fileResponse is FileInfo) {
+          if (this.videoFile == null) {
+            this.state = LoadState.success;
+            this.videoFile = fileResponse.file;
+            onComplete();
+          }
+        }
+      });
+    }
   }
 }
 
@@ -53,6 +63,14 @@ class StoryVideo extends StatefulWidget {
       Key key}) {
     return StoryVideo(
       VideoLoader(url, requestHeaders: requestHeaders),
+      storyController: controller,
+      key: key,
+    );
+  }
+
+  static StoryVideo file(File file, {StoryController controller, Key key}) {
+    return StoryVideo(
+      VideoLoader('', file: file),
       storyController: controller,
       key: key,
     );
