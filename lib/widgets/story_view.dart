@@ -721,8 +721,6 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                         }
 
                         verticalDragInfo.update(details.primaryDelta);
-
-                        // TODO: provide callback interface for animation purposes
                       },
                 onVerticalDragEnd: widget.onVerticalSwipeComplete == null
                     ? null
