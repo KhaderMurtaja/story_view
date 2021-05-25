@@ -98,7 +98,7 @@ class StoryItem {
         //color: backgroundColor,
       ),
       shown: shown,
-      duration: duration ?? Duration(seconds: 3),
+      duration: duration ?? Duration(seconds: 6),
     );
   }
 
