@@ -1,6 +1,15 @@
-enum LoadState { loading, success, failure }
+enum LoadState {
+  loading,
+  success,
+  failure,
+}
 
-enum Direction { up, down, left, right }
+enum Direction {
+  up,
+  down,
+  left,
+  right,
+}
 
 class VerticalDragInfo {
   bool cancel = false;
