@@ -89,13 +89,14 @@ class StoryImage extends StatefulWidget {
     Key key,
   }) {
     return StoryImage(
-        ImageLoader(
-          url,
-          requestHeaders: requestHeaders,
-        ),
-        controller: controller,
-        fit: fit,
-        key: key);
+      ImageLoader(
+        url,
+        requestHeaders: requestHeaders,
+      ),
+      controller: controller,
+      fit: fit,
+      key: key,
+    );
   }
 
   @override
@@ -187,12 +188,13 @@ class StoryImageState extends State<StoryImage> {
         );
       case LoadState.failure:
         return Center(
-            child: Text(
-          "Image failed to load.",
-          style: TextStyle(
-            color: Colors.white,
+          child: Text(
+            "Image failed to load.",
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
-        ));
+        );
       default:
         return Center(
           child: Container(
